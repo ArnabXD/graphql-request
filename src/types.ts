@@ -1,4 +1,5 @@
-import { DocumentNode } from 'graphql/language/ast'
+// deno-lint-ignore-file no-explicit-any
+import { DocumentNode } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts'
 
 export type Variables = { [key: string]: any }
 
@@ -48,7 +49,7 @@ export class ClientError extends Error {
   private static extractMessage(response: GraphQLResponse): string {
     try {
       return response.errors![0].message
-    } catch (e) {
+    } catch (_e) {
       return `GraphQL Error (Code: ${response.status})`
     }
   }

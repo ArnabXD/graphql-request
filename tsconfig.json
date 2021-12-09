@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "lib": ["es2015"],
-    "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "outDir": "dist",

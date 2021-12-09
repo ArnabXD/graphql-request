@@ -1,7 +1,7 @@
-import { isExtractableFile, extractFiles, ExtractableFile } from 'extract-files'
-import FormDataNode from 'form-data'
+// deno-lint-ignore-file no-explicit-any
+import { isExtractableFile, extractFiles, ExtractableFile } from 'https://cdn.esm.sh/extract-files'
 
-import { Variables } from './types'
+import { Variables } from './types.ts'
 
 /**
  * Duck type if NodeJS stream
@@ -44,7 +44,7 @@ export default function createRequestBody(
     return JSON.stringify(payload)
   }
 
-  const Form = typeof FormData === 'undefined' ? FormDataNode : FormData
+  const Form = typeof FormData === 'undefined' ? FormData : FormData
 
   const form = new Form()
 

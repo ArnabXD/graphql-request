@@ -1,6 +1,4 @@
-;(global as any).fetch = require('fetch-cookie/node-fetch')(require('node-fetch'))
-
-import { GraphQLClient } from '../src'
+import { GraphQLClient } from '../src/index.ts'
 ;(async function () {
   const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
 

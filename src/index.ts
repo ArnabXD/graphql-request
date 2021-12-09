@@ -1,11 +1,12 @@
-import crossFetch, * as CrossFetch from 'cross-fetch'
-import { OperationDefinitionNode } from 'graphql/language/ast'
-import { print } from 'graphql/language/printer'
-import createRequestBody from './createRequestBody'
-import { BatchRequestDocument, ClientError, RequestDocument, Variables } from './types'
-import * as Dom from './types.dom'
+// deno-lint-ignore-file no-explicit-any
+const crossFetch = fetch;
+import { OperationDefinitionNode } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts';
+import { print } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts'
+import createRequestBody from './createRequestBody.ts'
+import { BatchRequestDocument, ClientError, RequestDocument, Variables } from './types.ts'
+import * as Dom from './types.dom.ts'
 
-export { BatchRequestDocument, ClientError, RequestDocument, Variables }
+export type { BatchRequestDocument, ClientError, RequestDocument, Variables }
 
 /**
  * Convert the given headers configuration into a plain object.
@@ -15,7 +16,7 @@ const resolveHeaders = (headers: Dom.RequestInit['headers']): Record<string, str
   if (headers) {
     if (
       (typeof Headers !== 'undefined' && headers instanceof Headers) ||
-      headers instanceof CrossFetch.Headers
+      headers instanceof Headers
     ) {
       oHeaders = HeadersInstanceToPlainObject(headers)
     } else if (Array.isArray(headers)) {
@@ -168,8 +169,8 @@ export class GraphQLClient {
     variables?: V,
     requestHeaders?: Dom.RequestInit['headers']
   ): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }> {
-    let { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    let { url } = this
+    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
+    const { url } = this
 
     return makeRequest<T, V>({
       url,
@@ -194,8 +195,8 @@ export class GraphQLClient {
     variables?: V,
     requestHeaders?: Dom.RequestInit['headers']
   ): Promise<T> {
-    let { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    let { url } = this
+    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
+    const { url } = this
 
     const { query, operationName } = resolveRequestDocument(document)
 
@@ -223,8 +224,8 @@ export class GraphQLClient {
     documents: BatchRequestDocument<V>[],
     requestHeaders?: Dom.RequestInit['headers']
   ): Promise<T> {
-    let { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    let { url } = this
+    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
+    const { url } = this
 
     const queries = documents.map(({ document }) => resolveRequestDocument(document).query)
     const variables = documents.map(({ variables }) => variables)
@@ -259,7 +260,7 @@ export class GraphQLClient {
 
     if (headers) {
       // todo what if headers is in nested array form... ?
-      //@ts-ignore
+      // @ts-ignore We can use any key in the header
       headers[key] = value
     } else {
       this.options.headers = { [key]: value }
@@ -304,7 +305,7 @@ async function makeRequest<T = any, V = Variables>({
     query,
     variables,
     operationName,
-    headers,
+    headers: headers as any, // TODO
     fetch,
     fetchOptions,
   })
@@ -339,7 +340,7 @@ export async function rawRequest<T = any, V = Variables>(
   requestHeaders?: Dom.RequestInit['headers']
 ): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }> {
   const client = new GraphQLClient(url)
-  return client.rawRequest<T, V>(query, variables, requestHeaders)
+  return await client.rawRequest<T, V>(query, variables, requestHeaders)
 }
 
 /**
@@ -383,7 +384,7 @@ export async function request<T = any, V = Variables>(
   requestHeaders?: Dom.RequestInit['headers']
 ): Promise<T> {
   const client = new GraphQLClient(url)
-  return client.request<T, V>(document, variables, requestHeaders)
+  return await client.request<T, V>(document, variables, requestHeaders)
 }
 
 /**
@@ -426,7 +427,7 @@ export async function batchRequests<T extends any = any, V = Variables>(
   requestHeaders?: Dom.RequestInit['headers']
 ): Promise<T> {
   const client = new GraphQLClient(url)
-  return client.batchRequests<T, V>(documents, requestHeaders)
+  return await client.batchRequests<T, V>(documents, requestHeaders)
 }
 
 export default request
@@ -452,8 +453,8 @@ function resolveRequestDocument(document: RequestDocument): { query: string; ope
 
   let operationName = undefined
 
-  let operationDefinitions = document.definitions.filter(
-    (definition) => definition.kind === 'OperationDefinition'
+  const operationDefinitions = document.definitions.filter(
+    (definition: any) => definition.kind === 'OperationDefinition'
   ) as OperationDefinitionNode[]
 
   if (operationDefinitions.length === 1) {
