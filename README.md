@@ -21,8 +21,6 @@ Now it also supports Deno 🦕
   - [Using GraphQL Document variables](#using-graphql-document-variables)
   - [GraphQL Mutations](#graphql-mutations)
   - [Error handling](#error-handling)
-  - [Using `require` instead of `import`](#using-require-instead-of-import)
-  - [Cookie support for `node`](#cookie-support-for-node)
   - [Using a custom `fetch` method](#using-a-custom-fetch-method)
   - [Receiving a raw response](#receiving-a-raw-response)
   - [File Upload](#file-upload)
@@ -48,8 +46,11 @@ Now it also supports Deno 🦕
 Send a GraphQL query with a single line of code. ▶️
 [Try it out](https://runkit.com/593130bdfad7120012472003/593130bdfad7120012472004).
 
-```js
-import { gql, request } from "graphql-request";
+```ts
+import {
+  gql,
+  request,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const query = gql`
   {
@@ -69,8 +70,11 @@ request("https://api.graph.cool/simple/v1/movies", query).then((data) =>
 
 ## Usage
 
-```js
-import { GraphQLClient, request } from "graphql-request";
+```ts
+import {
+  GraphQLClient,
+  request,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 // Run GraphQL queries/mutations using a static function
 request(endpoint, query, variables).then((data) => console.log(data));
@@ -92,8 +96,11 @@ that generates a `graphql-request` ready-to-use SDK, which is fully-typed.
 
 ### Authentication via HTTP header
 
-```js
-import { gql, GraphQLClient } from "graphql-request";
+```ts
+import {
+  gql,
+  GraphQLClient,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -129,8 +136,8 @@ main().catch((error) => console.error(error));
 If you want to set headers after the GraphQLClient has been initialised, you can
 use the `setHeader()` or `setHeaders()` functions.
 
-```js
-import { GraphQLClient } from "graphql-request";
+```ts
+import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -146,11 +153,11 @@ client.setHeaders({
 
 #### Set endpoint
 
-If you want to change the endpoint after the GraphQLClient has been initialised,
+If you want to change the endpoint after the GraphQLClient has been initialized,
 you can use the `setEndpoint()` function.
 
-```js
-import { GraphQLClient } from "graphql-request";
+```ts
+import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -162,8 +169,8 @@ client.setEndpoint(newEndpoint);
 It is possible to pass custom headers for each request. `request()` and
 `rawRequest()` accept a header object as the third parameter
 
-```js
-import { GraphQLClient } from "graphql-request";
+```ts
+import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -192,8 +199,11 @@ const data = await client.request(query, variables, requestHeaders);
 
 ### Passing more options to `fetch`
 
-```js
-import { gql, GraphQLClient } from "graphql-request";
+```ts
+import {
+  gql,
+  GraphQLClient,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -223,10 +233,17 @@ main().catch((error) => console.error(error));
 
 [TypeScript Source](examples/passing-more-options-to-fetch.ts)
 
+```bash
+deno run --allow-net examples/passing-more-options-to-fetch.ts
+```
+
 ### Using GraphQL Document variables
 
-```js
-import { gql, request } from "graphql-request";
+```ts
+import {
+  gql,
+  request,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -255,8 +272,11 @@ main().catch((error) => console.error(error));
 
 ### GraphQL Mutations
 
-```js
-import { gql, GraphQLClient } from "graphql-request";
+```ts
+import {
+  gql,
+  GraphQLClient,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -290,10 +310,17 @@ main().catch((error) => console.error(error));
 
 [TypeScript Source](examples/using-variables.ts)
 
+```bash
+deno run --allow-net examples/using-variables.ts
+```
+
 ### Error handling
 
-```js
-import { gql, request } from "graphql-request";
+```ts
+import {
+  gql,
+  request,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -323,90 +350,22 @@ main().catch((error) => console.error(error));
 
 [TypeScript Source](examples/error-handling.ts)
 
-### Using `require` instead of `import`
-
-```js
-const { request, gql } = require("graphql-request");
-
-async function main() {
-  const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
-
-  const query = gql`
-    {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          name
-        }
-      }
-    }
-  `;
-
-  const data = await request(endpoint, query);
-  console.log(JSON.stringify(data, undefined, 2));
-}
-
-main().catch((error) => console.error(error));
+```bash
+deno run --allow-net examples/error-handling.ts
 ```
-
-### Cookie support for `node`
-
-```sh
-npm install fetch-cookie
-```
-
-```js
-require("fetch-cookie/node-fetch")(require("node-fetch"));
-
-import { gql, GraphQLClient } from "graphql-request";
-
-async function main() {
-  const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
-
-  const graphQLClient = new GraphQLClient(endpoint, {
-    headers: {
-      authorization: "Bearer MY_TOKEN",
-    },
-  });
-
-  const query = gql`
-    {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          name
-        }
-      }
-    }
-  `;
-
-  const data = await graphQLClient.rawRequest(query);
-  console.log(JSON.stringify(data, undefined, 2));
-}
-
-main().catch((error) => console.error(error));
-```
-
-[TypeScript Source](examples/cookie-support-for-node.ts)
 
 ### Using a custom `fetch` method
 
-```sh
-npm install fetch-cookie
-```
+```ts
+import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { wrapFetch } from "https://deno.land/x/fetch_goody@v5.0.0/mod.ts";
 
-```js
-import { gql, GraphQLClient } from "graphql-request";
-import crossFetch from "cross-fetch";
-
-async function main() {
+const start = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
-  // a cookie jar scoped to the client object
-  const fetch = require("fetch-cookie")(crossFetch);
-  const graphQLClient = new GraphQLClient(endpoint, { fetch });
+  const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch() });
 
-  const query = gql`
+  const query = /* GraphQL */ `
     {
       Movie(title: "Inception") {
         releaseDate
@@ -417,11 +376,15 @@ async function main() {
     }
   `;
 
-  const data = await graphQLClient.rawRequest(query);
-  console.log(JSON.stringify(data, undefined, 2));
-}
+  interface TData {
+    Movie: { releaseDate: string; actors: Array<{ name: string }> };
+  }
 
-main().catch((error) => console.error(error));
+  const data = await graphQLClient.rawRequest<TData>(query);
+  console.log(JSON.stringify(data, undefined, 2));
+};
+
+start().catch((error) => console.error(error));
 ```
 
 ### Receiving a raw response
@@ -429,8 +392,11 @@ main().catch((error) => console.error(error));
 The `request` method will return the `data` or `errors` key from the response.
 If you need to access the `extensions` key you can use the `rawRequest` method:
 
-```js
-import { gql, rawRequest } from "graphql-request";
+```ts
+import {
+  gql,
+  rawRequest,
+} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -458,12 +424,18 @@ async function main() {
 main().catch((error) => console.error(error));
 ```
 
+[TypeScript Source](examples/receiving-a-raw-response.ts)
+
+```bash
+deno run --allow-net examples/receiving-a-raw-response.ts
+```
+
 ### File Upload
 
 #### Browser
 
-```js
-import { request } from "graphql-request";
+```ts
+import { request } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -479,9 +451,9 @@ request("/api/graphql", UploadUserAvatar, {
 
 #### Node
 
-```js
+```ts
 import { createReadStream } from "fs";
-import { request } from "graphql-request";
+import { request } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -495,8 +467,6 @@ request("/api/graphql", UploadUserAvatar, {
 });
 ```
 
-[TypeScript Source](examples/receiving-a-raw-response.ts)
-
 ### Batching
 
 It is possible with `graphql-request` to use
@@ -505,7 +475,7 @@ via the `batchRequests()` function. Example available at
 [examples/batching-requests.ts](examples/batching-requests.ts)
 
 ```ts
-import { batchRequests } from "graphql-request";
+import { batchRequests } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
 
 (async function () {
   const endpoint = "https://api.spacex.land/graphql/";
@@ -533,6 +503,10 @@ import { batchRequests } from "graphql-request";
   ]);
   console.log(JSON.stringify(data, undefined, 2));
 })().catch((error) => console.error(error));
+```
+
+```bash
+deno run --allow-net examples/batching-requests.ts
 ```
 
 ## FAQ
