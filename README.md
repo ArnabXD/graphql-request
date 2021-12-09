@@ -47,10 +47,7 @@ Send a GraphQL query with a single line of code. ▶️
 [Try it out](https://runkit.com/593130bdfad7120012472003/593130bdfad7120012472004).
 
 ```ts
-import {
-  gql,
-  request,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, request } from "https://deno.land/x/graphql_request/mod.ts";
 
 const query = gql`
   {
@@ -74,7 +71,7 @@ request("https://api.graph.cool/simple/v1/movies", query).then((data) =>
 import {
   GraphQLClient,
   request,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+} from "https://deno.land/x/graphql_request/mod.ts";
 
 // Run GraphQL queries/mutations using a static function
 request(endpoint, query, variables).then((data) => console.log(data));
@@ -97,10 +94,7 @@ that generates a `graphql-request` ready-to-use SDK, which is fully-typed.
 ### Authentication via HTTP header
 
 ```ts
-import {
-  gql,
-  GraphQLClient,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -137,7 +131,7 @@ If you want to set headers after the GraphQLClient has been initialised, you can
 use the `setHeader()` or `setHeaders()` functions.
 
 ```ts
-import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -157,7 +151,7 @@ If you want to change the endpoint after the GraphQLClient has been initialized,
 you can use the `setEndpoint()` function.
 
 ```ts
-import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -170,7 +164,7 @@ It is possible to pass custom headers for each request. `request()` and
 `rawRequest()` accept a header object as the third parameter
 
 ```ts
-import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 const client = new GraphQLClient(endpoint);
 
@@ -200,10 +194,7 @@ const data = await client.request(query, variables, requestHeaders);
 ### Passing more options to `fetch`
 
 ```ts
-import {
-  gql,
-  GraphQLClient,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -240,10 +231,7 @@ deno run --allow-net examples/passing-more-options-to-fetch.ts
 ### Using GraphQL Document variables
 
 ```ts
-import {
-  gql,
-  request,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, request } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -273,10 +261,7 @@ main().catch((error) => console.error(error));
 ### GraphQL Mutations
 
 ```ts
-import {
-  gql,
-  GraphQLClient,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -317,10 +302,7 @@ deno run --allow-net examples/using-variables.ts
 ### Error handling
 
 ```ts
-import {
-  gql,
-  request,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, request } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -357,7 +339,7 @@ deno run --allow-net examples/error-handling.ts
 ### Using a custom `fetch` method
 
 ```ts
-import { GraphQLClient } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 import { wrapFetch } from "https://deno.land/x/fetch_goody@v5.0.0/mod.ts";
 
 const start = async () => {
@@ -393,10 +375,7 @@ The `request` method will return the `data` or `errors` key from the response.
 If you need to access the `extensions` key you can use the `rawRequest` method:
 
 ```ts
-import {
-  gql,
-  rawRequest,
-} from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { gql, rawRequest } from "https://deno.land/x/graphql_request/mod.ts";
 
 async function main() {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
@@ -435,7 +414,7 @@ deno run --allow-net examples/receiving-a-raw-response.ts
 #### Browser
 
 ```ts
-import { request } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { request } from "https://deno.land/x/graphql_request/mod.ts";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -453,7 +432,7 @@ request("/api/graphql", UploadUserAvatar, {
 
 ```ts
 import { createReadStream } from "fs";
-import { request } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { request } from "https://deno.land/x/graphql_request/mod.ts";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -475,7 +454,7 @@ via the `batchRequests()` function. Example available at
 [examples/batching-requests.ts](examples/batching-requests.ts)
 
 ```ts
-import { batchRequests } from "https://raw.githubusercontent.com/ArtCodeStudio/graphql-request/master/mod.ts";
+import { batchRequests } from "https://deno.land/x/graphql_request/mod.ts";
 
 (async function () {
   const endpoint = "https://api.spacex.land/graphql/";
