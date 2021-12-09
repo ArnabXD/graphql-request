@@ -1,10 +1,13 @@
-import { GraphQLClient } from '../src'
-import { setupTestServer } from './__helpers'
-import fetch from 'cross-fetch';
+import { GraphQLClient } from '../mod.ts'
+import { setupTestServer } from './__helpers.ts'
+import {
+    assert,
+  } from "https://deno.land/std@0.117.0/testing/asserts.ts";
+  
 
 const ctx = setupTestServer()
 
-test('with custom fetch', async () => {
+Deno.test('with custom fetch', async () => {
     let touched = false;
     // wrap fetch in a custom method
     const customFetch = function(input: RequestInfo, init?: RequestInit) {
@@ -14,5 +17,5 @@ test('with custom fetch', async () => {
     const client = new GraphQLClient(ctx.url, { fetch: customFetch })
     const mock = ctx.res()
     await client.request(`{ me { id } }`)
-    expect(touched).toEqual(true)
+    assert(touched)
 })

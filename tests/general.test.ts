@@ -1,9 +1,12 @@
-import { GraphQLClient, rawRequest, request } from '../src'
-import { setupTestServer } from './__helpers'
+import { GraphQLClient, rawRequest, request } from '../mod.ts'
+import { setupTestServer } from './__helpers.ts'
+import {
+  assertEquals,
+} from "https://deno.land/std@0.117.0/testing/asserts.ts";
 
 const ctx = setupTestServer()
 
-test('minimal query', async () => {
+Deno.test('minimal query', async () => {
   const { data } = ctx.res({
     body: {
       data: {
@@ -14,10 +17,10 @@ test('minimal query', async () => {
     },
   }).spec.body!
 
-  expect(await request(ctx.url, `{ me { id } }`)).toEqual(data)
+  assertEquals(await request(ctx.url, `{ me { id } }`), data)
 })
 
-test('minimal raw query', async () => {
+Deno.test('minimal raw query', async () => {
   const { extensions, data } = ctx.res({
     body: {
       data: {
@@ -31,10 +34,10 @@ test('minimal raw query', async () => {
     },
   }).spec.body!
   const { headers, ...result } = await rawRequest(ctx.url, `{ me { id } }`)
-  expect(result).toEqual({ data, extensions, status: 200 })
+  assertEquals(result, { data, extensions, status: 200 })
 })
 
-test('minimal raw query with response headers', async () => {
+Deno.test('minimal raw query with response headers', async () => {
   const { headers: reqHeaders, body } = ctx.res({
     headers: {
       'Content-Type': 'application/json',
@@ -54,11 +57,11 @@ test('minimal raw query with response headers', async () => {
 
   const { headers, ...result } = await rawRequest(ctx.url, `{ me { id } }`)
 
-  expect(result).toEqual({ ...body, status: 200 })
-  expect(headers.get('X-Custom-Header')).toEqual(reqHeaders!['X-Custom-Header'])
+  assertEquals(result, { ...body, status: 200 })
+  assertEquals(headers.get('X-Custom-Header'), reqHeaders!['X-Custom-Header'])
 })
 
-test('content-type with charset', async () => {
+Deno.test('content-type with charset', async () => {
   const { data } = ctx.res({
     // headers: { 'Content-Type': 'application/json; charset=utf-8' },
     body: {
@@ -70,10 +73,10 @@ test('content-type with charset', async () => {
     },
   }).spec.body!
 
-  expect(await request(ctx.url, `{ me { id } }`)).toEqual(data)
+  assertEquals(await request(ctx.url, `{ me { id } }`), data)
 })
 
-test('basic error', async () => {
+Deno.test('basic error', async () => {
   ctx.res({
     body: {
       errors: {
@@ -95,7 +98,7 @@ test('basic error', async () => {
   )
 })
 
-test('basic error with raw request', async () => {
+Deno.test('basic error with raw request', async () => {
   ctx.res({
     body: {
       errors: {
@@ -117,7 +120,7 @@ test('basic error with raw request', async () => {
 
 // todo needs to be tested in browser environment
 // the options under test here aren't used by node-fetch
-test.skip('extra fetch options', async () => {
+Deno.test('extra fetch options', async () => {
   const options: RequestInit = {
     credentials: 'include',
     mode: 'cors',

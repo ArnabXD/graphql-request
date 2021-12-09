@@ -1,10 +1,12 @@
-import { response } from 'express'
-import { GraphQLClient, batchRequests } from '../src'
-import { setupTestServer, MockSpecBatch } from './__helpers'
+import { batchRequests } from '../mod.ts'
+import { setupTestServer, MockSpecBatch } from './__helpers.ts'
+import {
+  assertEquals,
+} from "https://deno.land/std@0.117.0/testing/asserts.ts";
 
 const ctx = setupTestServer<MockSpecBatch>()
 
-test('minimal double query', async () => {
+Deno.test('minimal double query', async () => {
   const firstResult = { me: { id: 'some-id' } }
   const secondResult = { me: { id: 'another-id' } }
   const okq = ctx.res({
@@ -16,11 +18,11 @@ test('minimal double query', async () => {
     { document: `{ me { id } }` },
   ])
 
-  expect(firstResponse.data).toEqual(firstResult)
-  expect(secondResponse.data).toEqual(secondResult)
+  assertEquals(firstResponse.data, firstResult)
+  assertEquals(secondResponse.data, secondResult)
 })
 
-test('basic error', async () => {
+Deno.test('basic error', async () => {
   ctx.res({
     body: [
       {
@@ -42,7 +44,7 @@ test('basic error', async () => {
   )
 })
 
-test('successful query with another which make an error', async () => {
+Deno.test('successful query with another which make an error', async () => {
   const firstResult = { data: { me: { id: 'some-id' } } }
   const secondResult = {
     errors: {

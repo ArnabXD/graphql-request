@@ -46,7 +46,7 @@ beforeEach(() => {
 
 const fileName = 'upload.test.ts'
 
-test('file upload using global.FormData', async () => {
+Deno.test('file upload using global.FormData', async () => {
   ;(global as any).FormData = FormData
 
   const query = gql`
@@ -62,7 +62,7 @@ test('file upload using global.FormData', async () => {
   expect(result).toEqual({ uploadFile: fileName })
 })
 
-test('file upload still works if no global.FormData provided', async () => {
+Deno.test('file upload still works if no global.FormData provided', async () => {
   const query = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file)
