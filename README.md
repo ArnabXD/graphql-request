@@ -26,6 +26,7 @@ Now it also supports Deno 🦕
   - [File Upload](#file-upload)
     - [Browser](#browser)
     - [Node](#node)
+    - [Deno](#deno)
   - [Batching](#batching)
 - [FAQ](#faq)
   - [Why do I have to install `graphql`?](#why-do-i-have-to-install-graphql)
@@ -60,9 +61,9 @@ const query = gql`
   }
 `;
 
-request("https://api.graph.cool/simple/v1/movies", query).then((data) =>
-  console.log(data)
-);
+const data = await request("https://api.graph.cool/simple/v1/movies", query);
+
+console.log(data);
 ```
 
 ## Usage
@@ -74,16 +75,18 @@ import {
 } from "https://deno.land/x/graphql_request/mod.ts";
 
 // Run GraphQL queries/mutations using a static function
-request(endpoint, query, variables).then((data) => console.log(data));
+const data = await request(endpoint, query, variables);
+console.log(data);
 
 // ... or create a GraphQL client instance to send requests
 const client = new GraphQLClient(endpoint, { headers: {} });
-client.request(query, variables).then((data) => console.log(data));
+const data = client.request(query, variables);
+console.log(data);
 ```
 
 ## Community
 
-#### GraphQL Code Generator's GraphQL-Request TypeScript Plugin
+### GraphQL Code Generator's GraphQL-Request TypeScript Plugin
 
 A
 [GraphQL-Codegen plugin](https://graphql-code-generator.com/docs/plugins/typescript-graphql-request)
@@ -96,7 +99,7 @@ that generates a `graphql-request` ready-to-use SDK, which is fully-typed.
 ```ts
 import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const graphQLClient = new GraphQLClient(endpoint, {
@@ -118,12 +121,20 @@ async function main() {
 
   const data = await graphQLClient.request(query);
   console.log(JSON.stringify(data, undefined, 2));
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 [TypeScript Source](examples/authentication-via-http-header.ts)
+
+```bash
+deno run --allow-net examples/authentication-via-http-header.ts
+```
 
 #### Incrementally setting headers
 
@@ -196,7 +207,7 @@ const data = await client.request(query, variables, requestHeaders);
 ```ts
 import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const graphQLClient = new GraphQLClient(endpoint, {
@@ -217,9 +228,13 @@ async function main() {
 
   const data = await graphQLClient.request(query);
   console.log(JSON.stringify(data, undefined, 2));
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 [TypeScript Source](examples/passing-more-options-to-fetch.ts)
@@ -233,7 +248,7 @@ deno run --allow-net examples/passing-more-options-to-fetch.ts
 ```ts
 import { gql, request } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const query = gql`
@@ -253,9 +268,13 @@ async function main() {
 
   const data = await request(endpoint, query, variables);
   console.log(JSON.stringify(data, undefined, 2));
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 ### GraphQL Mutations
@@ -263,7 +282,7 @@ main().catch((error) => console.error(error));
 ```ts
 import { gql, GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const graphQLClient = new GraphQLClient(endpoint, {
@@ -288,9 +307,13 @@ async function main() {
   const data = await graphQLClient.request(mutation, variables);
 
   console.log(JSON.stringify(data, undefined, 2));
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 [TypeScript Source](examples/using-variables.ts)
@@ -304,7 +327,7 @@ deno run --allow-net examples/using-variables.ts
 ```ts
 import { gql, request } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const query = gql`
@@ -325,9 +348,13 @@ async function main() {
     console.error(JSON.stringify(error, undefined, 2));
     process.exit(1);
   }
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 [TypeScript Source](examples/error-handling.ts)
@@ -342,7 +369,7 @@ deno run --allow-net examples/error-handling.ts
 import { GraphQLClient } from "https://deno.land/x/graphql_request/mod.ts";
 import { wrapFetch } from "https://deno.land/x/fetch_goody@v5.0.0/mod.ts";
 
-const start = async () => {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch() });
@@ -366,7 +393,11 @@ const start = async () => {
   console.log(JSON.stringify(data, undefined, 2));
 };
 
-start().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 ### Receiving a raw response
@@ -377,7 +408,7 @@ If you need to access the `extensions` key you can use the `rawRequest` method:
 ```ts
 import { gql, rawRequest } from "https://deno.land/x/graphql_request/mod.ts";
 
-async function main() {
+const main = async () => {
   const endpoint = "https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr";
 
   const query = gql`
@@ -398,9 +429,13 @@ async function main() {
   console.log(
     JSON.stringify({ data, errors, extensions, headers, status }, undefined, 2),
   );
-}
+};
 
-main().catch((error) => console.error(error));
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
 
 [TypeScript Source](examples/receiving-a-raw-response.ts)
@@ -414,7 +449,7 @@ deno run --allow-net examples/receiving-a-raw-response.ts
 #### Browser
 
 ```ts
-import { request } from "https://deno.land/x/graphql_request/mod.ts";
+import { request } from "graphql-request";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -432,7 +467,7 @@ request("/api/graphql", UploadUserAvatar, {
 
 ```ts
 import { createReadStream } from "fs";
-import { request } from "https://deno.land/x/graphql_request/mod.ts";
+import { request } from "graphql-request";
 
 const UploadUserAvatar = gql`
   mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
@@ -446,6 +481,24 @@ request("/api/graphql", UploadUserAvatar, {
 });
 ```
 
+#### Deno
+
+```ts
+import { readableStreamFromReader as toStream } from "https://deno.land/std/io/mod.ts";
+import { request } from "https://deno.land/x/graphql_request/mod.ts";
+
+const UploadUserAvatar = gql`
+  mutation uploadUserAvatar($userId: Int!, $file: Upload!) {
+    updateUser(id: $userId, input: { avatar: $file })
+  }
+`;
+
+request("/api/graphql", UploadUserAvatar, {
+  userId: 1,
+  file: toStream(await Deno.open(("./avatar.img")),
+});
+```
+
 ### Batching
 
 It is possible with `graphql-request` to use
@@ -456,7 +509,7 @@ via the `batchRequests()` function. Example available at
 ```ts
 import { batchRequests } from "https://deno.land/x/graphql_request/mod.ts";
 
-(async function () {
+const main = async () => {
   const endpoint = "https://api.spacex.land/graphql/";
 
   const query1 = /* GraphQL */ `
@@ -481,8 +534,16 @@ import { batchRequests } from "https://deno.land/x/graphql_request/mod.ts";
     { document: query2 },
   ]);
   console.log(JSON.stringify(data, undefined, 2));
-})().catch((error) => console.error(error));
+};
+
+try {
+  main();
+} catch (error) {
+  console.error(error);
+}
 ```
+
+[TypeScript Source](examples/batching-requests.ts)
 
 ```bash
 deno run --allow-net examples/batching-requests.ts
