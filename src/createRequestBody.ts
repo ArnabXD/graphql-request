@@ -52,14 +52,14 @@ export default function createRequestBody(
 
   const map: { [key: number]: string[] } = {}
   let i = 0
-  files.forEach((paths) => {
+  files.forEach((paths: string[]) => {
     map[++i] = paths
   })
   form.append('map', JSON.stringify(map))
 
   i = 0
-  files.forEach((paths, file) => {
-    form.append(`${++i}`, file as any)
+  files.forEach((_paths: string[], file: string | Blob) => {
+    form.append(`${++i}`, file)
   })
 
   return form as FormData
