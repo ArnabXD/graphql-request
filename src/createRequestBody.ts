@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import { isExtractableFile, extractFiles, ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
+import * as ext from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
+import { ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 
+const { isExtractableFile, extractFiles } = ext
 import { Variables } from './types.ts'
 
 /**
