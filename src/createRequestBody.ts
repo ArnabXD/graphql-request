@@ -25,7 +25,7 @@ export default function createRequestBody(
   variables?: Variables | Variables[],
   operationName?: string
 ): string | FormData {
-  const { clone, files } = extractFiles({ query, variables, operationName }, '', isExtractableFileEnhanced)
+  const { clone, files } = extractFiles({ query, variables, operationName }, isExtractableFileEnhanced, '')
 
   if (files.size === 0) {
     if (!Array.isArray(query)) {
