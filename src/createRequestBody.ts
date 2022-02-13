@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import * as ext from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
+import ext from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 import { ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 
 console.log(ext)
