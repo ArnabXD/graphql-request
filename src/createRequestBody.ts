@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import extractFiles from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
-import isExtractableFile from 'https://cdn.esm.sh/extract-files@12.0.0/isExtractableFile.mjs'
+import * as extractFiles from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
+import * as isExtractableFile from 'https://cdn.esm.sh/extract-files@12.0.0/isExtractableFile.mjs'
 
 import { ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 
