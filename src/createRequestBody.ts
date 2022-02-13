@@ -2,6 +2,7 @@
 import * as ext from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 import { ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
 
+console.log(ext)
 const { isExtractableFile, extractFiles } = ext
 import { Variables } from './types.ts'
 
