@@ -10,8 +10,7 @@ import { rawRequest } from '../src/index.ts'
         fruit_name
         family
       }
-    }
-  `
+    }`
 
     interface Fruit {
       "id": string;

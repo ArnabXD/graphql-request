@@ -10,8 +10,7 @@ import { request } from '../src/index.ts'
         fruit_name
         family
       }
-    }
-  `
+    }`
 
     const variables = {
       family: 'Rosaceae',

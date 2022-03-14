@@ -7,7 +7,7 @@ on:
       - "*"
 
 jobs:
-  test:
+  examples:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -23,8 +23,23 @@ jobs:
         with:
           deno-version: ${{ matrix.deno }}
 
+      - name: examples/authentication-via-http-header.ts
+        run: deno run --allow-net examples/authentication-via-http-header.ts
+
       - name: examples/batching-requests.ts
         run: deno run --allow-net examples/batching-requests.ts
+
+      - name: examples/custom-fetch.ts
+        run: deno run --allow-net examples/custom-fetch.ts
+
+      - name: examples/error-handling.ts
+        run: deno run --allow-net examples/error-handling.ts
+
+      - name: examples/passing-custom-header-per-request.ts
+        run: deno run --allow-net examples/passing-custom-header-per-request.ts
+
+      - name: examples/passing-more-options-to-fetch.ts
+        run: deno run --allow-net examples/passing-more-options-to-fetch.ts
 
       - name: examples/receiving-a-raw-response.ts
         run: deno run --allow-net examples/receiving-a-raw-response.ts
