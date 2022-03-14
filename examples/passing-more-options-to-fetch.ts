@@ -1,4 +1,4 @@
-import { GraphQLClient } from '../src/index.ts'
+import { GraphQLClient } from '../mod.ts'
   ; (async function () {
     const endpoint = 'https://fruits-api.netlify.app/graphql'
 

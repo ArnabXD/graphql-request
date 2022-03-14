@@ -1,5 +1,5 @@
-import { GraphQLClient } from '../src/index.ts'
-import { wrapFetch } from 'https://deno.land/x/fetch_goody@v5.0.0/mod.ts';
+import { GraphQLClient } from '../mod.ts'
+import { wrapFetch } from 'https://deno.land/x/fetch_goody@v5.0.1/mod.ts';
 
 const start = async () => {
   const endpoint = 'https://fruits-api.netlify.app/graphql'

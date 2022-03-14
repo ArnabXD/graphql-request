@@ -1,4 +1,4 @@
-import { rawRequest } from '../src/index.ts'
+import { rawRequest } from '../mod.ts'
   ; (async function () {
     const endpoint = 'https://fruits-api.netlify.app/graphql'
 
