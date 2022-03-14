@@ -1,24 +1,31 @@
 import { request } from '../src/index.ts'
   ; (async function () {
-    const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+    const endpoint = 'https://fruits-api.netlify.app/graphql'
 
     const query = /* GraphQL */ `
-    query getMovie($title: String!) {
-      Movie(title: $title) {
-        releaseDate
-        actors {
-          name
-        }
+    query filterFruit($family: String!) {
+      filterFruitsFam(family: $family) {
+        id
+        tree_name
+        fruit_name
+        family
       }
     }
   `
 
     const variables = {
-      title: 'Inception',
+      family: 'Rosaceae',
+    }
+
+    interface Fruit {
+      "id": string;
+      "tree_name": string;
+      "fruit_name": string;
+      "family": string;
     }
 
     interface TData {
-      Movie: { releaseDate: string; actors: Array<{ name: string }> }
+      filterFruitsFam: Fruit[]
     }
 
     const data = await request<TData>(endpoint, query, variables)
