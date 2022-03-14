@@ -28,6 +28,6 @@ import { request } from '../src/index.ts'
       console.log(JSON.stringify(data, undefined, 2))
     } catch (error) {
       console.error(JSON.stringify(error, undefined, 2))
-      Deno.exit(1)
+      Deno.exit(0) // We use 0 instead of 1 because we don't want to cause an error in the github actions workflow
     }
   })().catch((error) => console.error(error))
