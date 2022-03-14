@@ -4,7 +4,7 @@ import { setupTestServer } from './__helpers.ts'
 
 import {
   assertEquals,
-} from "https://deno.land/std@0.117.0/testing/asserts.ts";
+} from "https://deno.land/std@0.129.0/testing/asserts.ts";
 
 const ctx = setupTestServer()
 const H = Headers;
@@ -48,14 +48,14 @@ Deno.test('using class', () => {
       [{ 'x-request-foo': 'request-bar' }],
       [[['x-request-foo', 'request-bar']]]
     ])('request unique header with request', (headerCase: Dom.RequestInit['headers']) => {
-      
+
       Deno.test('with request method', async () => {
         const client = new GraphQLClient(ctx.url)
 
         client.setHeaders(new H({ 'x-foo': 'bar' }))
         const mock = ctx.res()
         await client.request(`{ me { id } }`, {}, headerCase)
-  
+
         assertEquals(mock.requests[0].headers['x-foo'], 'bar')
         assertEquals(mock.requests[0].headers['x-request-foo'], 'request-bar')
       })
@@ -66,12 +66,12 @@ Deno.test('using class', () => {
         client.setHeaders(new H({ 'x-foo': 'bar' }))
         const mock = ctx.res()
         await client.rawRequest(`{ me { id } }`, {}, headerCase)
-  
+
         assertEquals(mock.requests[0].headers['x-foo'], 'bar')
         assertEquals(mock.requests[0].headers['x-request-foo'], 'request-bar')
       })
     })
-  
+
     describe.each([
       [new H({ 'x-foo': 'request-bar' })],
       [{ 'x-foo': 'request-bar' }],
