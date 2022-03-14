@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { isExtractableFile, extractFiles, ExtractableFile } from 'https://cdn.esm.sh/extract-files'
+import extractFiles, { ExtractableFile } from 'https://cdn.esm.sh/extract-files@12.0.0/extractFiles.mjs'
+import isExtractableFile from 'https://cdn.esm.sh/extract-files@12.0.0/isExtractableFile.mjs'
 
 import { Variables } from './types.ts'
 
@@ -21,7 +22,7 @@ export default function createRequestBody(
   variables?: Variables | Variables[],
   operationName?: string
 ): string | FormData {
-  const { clone, files } = extractFiles({ query, variables, operationName }, '', isExtractableFileEnhanced)
+  const { clone, files } = extractFiles({ query, variables, operationName }, isExtractableFileEnhanced, '')
 
   if (files.size === 0) {
     if (!Array.isArray(query)) {
@@ -52,14 +53,14 @@ export default function createRequestBody(
 
   const map: { [key: number]: string[] } = {}
   let i = 0
-  files.forEach((paths) => {
+  files.forEach((paths: string[]) => {
     map[++i] = paths
   })
   form.append('map', JSON.stringify(map))
 
   i = 0
-  files.forEach((paths, file) => {
-    form.append(`${++i}`, file as any)
+  files.forEach((_paths: string[], file: string | Blob) => {
+    form.append(`${++i}`, file)
   })
 
   return form as FormData
