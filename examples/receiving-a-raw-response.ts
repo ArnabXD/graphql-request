@@ -1,22 +1,29 @@
 import { rawRequest } from '../src/index.ts'
-;(async function () {
-  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+  ; (async function () {
+    const endpoint = 'https://fruits-api.netlify.app/graphql'
 
-  const query = /* GraphQL */ `
+    const query = /* GraphQL */ `
     {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          name
-        }
+      filterFruitsFam(family: "Rosaceae") {
+        id
+        tree_name
+        fruit_name
+        family
       }
     }
   `
 
-  interface TData {
-    Movie: { releaseDate: string; actors: Array<{ name: string }> }
-  }
+    interface Fruit {
+      "id": string;
+      "tree_name": string;
+      "fruit_name": string;
+      "family": string;
+    }
 
-  const { data, extensions, headers, status } = await rawRequest<TData>(endpoint, query)
-  console.log(JSON.stringify({ data, extensions, headers, status }, undefined, 2))
-})().catch((error) => console.error(error))
+    interface TData {
+      filterFruitsFam: Fruit[]
+    }
+
+    const { data, extensions, headers, status } = await rawRequest<TData>(endpoint, query)
+    console.log(JSON.stringify({ data, extensions, headers, status }, undefined, 2))
+  })().catch((error) => console.error(error))

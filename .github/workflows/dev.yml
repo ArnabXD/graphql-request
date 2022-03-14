@@ -26,5 +26,8 @@ jobs:
       - name: examples/batching-requests.ts
         run: deno run --allow-net examples/batching-requests.ts
 
+      - name: examples/receiving-a-raw-response.ts
+        run: deno run --allow-net examples/receiving-a-raw-response.ts
+
       - name: examples/using-variables.ts
         run: deno run --allow-net examples/using-variables.ts
