@@ -2,15 +2,15 @@ import { GraphQLClient } from '../mod.ts'
 import { setupTestServer } from './__helpers.ts'
 import {
     assert,
-  } from "https://deno.land/std@0.117.0/testing/asserts.ts";
-  
+} from "https://deno.land/std@0.129.0/testing/asserts.ts";
+
 
 const ctx = setupTestServer()
 
 Deno.test('with custom fetch', async () => {
     let touched = false;
     // wrap fetch in a custom method
-    const customFetch = function(input: RequestInfo, init?: RequestInit) {
+    const customFetch = function (input: RequestInfo, init?: RequestInit) {
         touched = true
         return fetch(input, init)
     }

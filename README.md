@@ -8,30 +8,33 @@ Now it also supports Deno 🦕
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Features](#features)
-- [Quickstart](#quickstart)
-- [Usage](#usage)
-- [Community](#community)
-  - [GraphQL Code Generator's GraphQL-Request TypeScript Plugin](#graphql-code-generators-graphql-request-typescript-plugin)
-- [Examples](#examples)
-  - [Authentication via HTTP header](#authentication-via-http-header)
-    - [Incrementally setting headers](#incrementally-setting-headers)
-  - [Passing Headers in each request](#passing-headers-in-each-request)
-  - [Passing more options to `fetch`](#passing-more-options-to-fetch)
-  - [Using GraphQL Document variables](#using-graphql-document-variables)
-  - [GraphQL Mutations](#graphql-mutations)
-  - [Error handling](#error-handling)
-  - [Using a custom `fetch` method](#using-a-custom-fetch-method)
-  - [Receiving a raw response](#receiving-a-raw-response)
-  - [File Upload](#file-upload)
-    - [Browser](#browser)
-    - [Node](#node)
-    - [Deno](#deno)
-  - [Batching](#batching)
-- [FAQ](#faq)
-  - [Why do I have to install `graphql`?](#why-do-i-have-to-install-graphql)
-  - [Do I need to wrap my GraphQL documents inside the `gql` template exported by `graphql-request`?](#do-i-need-to-wrap-my-graphql-documents-inside-the-gql-template-exported-by-graphql-request)
-  - [What's the difference between `graphql-request`, Apollo and Relay?](#whats-the-difference-between-graphql-request-apollo-and-relay)
+- [graphql-request](#graphql-request)
+  - [Features](#features)
+  - [Quickstart](#quickstart)
+  - [Usage](#usage)
+  - [Community](#community)
+    - [GraphQL Code Generator's GraphQL-Request TypeScript Plugin](#graphql-code-generators-graphql-request-typescript-plugin)
+  - [Examples](#examples)
+    - [Authentication via HTTP header](#authentication-via-http-header)
+      - [Incrementally setting headers](#incrementally-setting-headers)
+      - [Set endpoint](#set-endpoint)
+      - [passing-headers-in-each-request](#passing-headers-in-each-request)
+    - [Passing more options to `fetch`](#passing-more-options-to-fetch)
+    - [Using GraphQL Document variables](#using-graphql-document-variables)
+    - [GraphQL Mutations](#graphql-mutations)
+    - [Error handling](#error-handling)
+    - [Using a custom `fetch` method](#using-a-custom-fetch-method)
+    - [Receiving a raw response](#receiving-a-raw-response)
+    - [File Upload](#file-upload)
+      - [Browser](#browser)
+      - [Node](#node)
+      - [Deno](#deno)
+    - [Batching](#batching)
+    - [Cancellation](#cancellation)
+  - [FAQ](#faq)
+      - [Why do I have to install `graphql`?](#why-do-i-have-to-install-graphql)
+      - [Do I need to wrap my GraphQL documents inside the `gql` template exported by `graphql-request`?](#do-i-need-to-wrap-my-graphql-documents-inside-the-gql-template-exported-by-graphql-request)
+      - [What's the difference between `graphql-request`, Apollo and Relay?](#whats-the-difference-between-graphql-request-apollo-and-relay)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -549,19 +552,50 @@ try {
 deno run --allow-net examples/batching-requests.ts
 ```
 
+### Cancellation
+
+It is possible to cancel a request using an `AbortController` signal.
+
+You can define the `signal` in the `GraphQLClient` constructor:
+
+```ts
+const abortController = new AbortController();
+
+const client = new GraphQLClient(endpoint, { signal: abortController.signal });
+client.request(query);
+
+abortController.abort();
+```
+
+You can also set the signal per request (this will override an existing
+GraphQLClient signal):
+
+```ts
+const abortController = new AbortController();
+
+const client = new GraphQLClient(endpoint);
+client.request({ document: query, signal: abortController.signal });
+
+abortController.abort();
+```
+
+In Node environment, `AbortController` is supported since version v14.17.0. For
+Node.js v12 you can use
+[abort-controller](https://github.com/mysticatea/abort-controller) polyfill.
+
+```
+ import 'abort-controller/polyfill'
+
+ const abortController = new AbortController()
+```
+
 ## FAQ
 
 #### Why do I have to install `graphql`?
 
-`graphql-request` uses a TypeScript type from the `graphql` package such that if
-you are using TypeScript to build your project and you are using
-`graphql-request` but don't have `graphql` installed TypeScript build will fail.
-Details
-[here](https://github.com/prisma-labs/graphql-request/pull/183#discussion_r464453076).
-If you are a JS user then you do not technically need to install `graphql`.
-However if you use an IDE that picks up TS types even for JS (like VSCode) then
-its still in your interest to install `graphql` so that you can benefit from
-enhanced type safety during development.
+`graphql-request` uses methods exposed by the `graphql` package to handle some
+internal logic. On top of that, for TypeScript users, some types are used from
+the `graphql` package to provide better typings.
 
 #### Do I need to wrap my GraphQL documents inside the `gql` template exported by `graphql-request`?
 

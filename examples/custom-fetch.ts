@@ -2,23 +2,29 @@ import { GraphQLClient } from '../src/index.ts'
 import { wrapFetch } from 'https://deno.land/x/fetch_goody@v5.0.0/mod.ts';
 
 const start = async () => {
-  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+  const endpoint = 'https://fruits-api.netlify.app/graphql'
 
-  const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch()})
+  const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch() })
 
   const query = /* GraphQL */ `
     {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          name
-        }
+      filterFruitsFam(family: "Rosaceae") {
+        id
+        tree_name
+        fruit_name
+        family
       }
-    }
-  `
+    }`
+
+  interface Fruit {
+    "id": string;
+    "tree_name": string;
+    "fruit_name": string;
+    "family": string;
+  }
 
   interface TData {
-    Movie: { releaseDate: string; actors: Array<{ name: string }> }
+    filterFruitsFam: Fruit[]
   }
 
   const data = await graphQLClient.rawRequest<TData>(query)

@@ -1,33 +1,39 @@
 import { GraphQLClient } from '../src/index.ts'
-;(async function () {
-  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+  ; (async function () {
+    const endpoint = 'https://fruits-api.netlify.app/graphql'
 
-  const client = new GraphQLClient(endpoint, {
-    headers: {
-      authorization: 'Bearer MY_TOKEN',
-    },
-  })
+    const client = new GraphQLClient(endpoint, {
+      headers: {
+        authorization: 'Bearer MY_TOKEN',
+      },
+    })
 
-  const query = /* GraphQL */ `
+    const query = /* GraphQL */ `
     {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          name
-        }
+      filterFruitsFam(family: "Rosaceae") {
+        id
+        tree_name
+        fruit_name
+        family
       }
+    }`
+
+    const requestHeaders = {
+      authorization: 'Bearer MY_TOKEN_2',
+      'x-custom': 'foo'
     }
-  `
 
-  const requestHeaders = {
-    authorization: 'Bearer MY_TOKEN_2',
-    'x-custom': 'foo'
-  }
+    interface Fruit {
+      "id": string;
+      "tree_name": string;
+      "fruit_name": string;
+      "family": string;
+    }
 
-  interface TData {
-    Movie: { releaseDate: string; actors: Array<{ name: string }> }
-  }
+    interface TData {
+      filterFruitsFam: Fruit[]
+    }
 
-  const data = await client.request<TData>(query, {}, requestHeaders)
-  console.log(JSON.stringify(data, undefined, 2))
-})().catch((error) => console.error(error))
+    const data = await client.request<TData>(query, {}, requestHeaders)
+    console.log(JSON.stringify(data, undefined, 2))
+  })().catch((error) => console.error(error))

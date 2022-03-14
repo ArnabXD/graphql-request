@@ -2,7 +2,7 @@ import { batchRequests } from '../mod.ts'
 import { setupTestServer, MockSpecBatch } from './__helpers.ts'
 import {
   assertEquals,
-} from "https://deno.land/std@0.117.0/testing/asserts.ts";
+} from "https://deno.land/std@0.129.0/testing/asserts.ts";
 
 const ctx = setupTestServer<MockSpecBatch>()
 

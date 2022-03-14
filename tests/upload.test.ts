@@ -1,8 +1,8 @@
 import { createReadStream } from 'fs'
 import { FileUpload, GraphQLUpload } from 'graphql-upload'
 import { join } from 'path'
-import { gql, request } from '../src'
-import { createApolloServerContext } from './__helpers'
+import { gql, request } from '../mod.ts'
+import { createApolloServerContext } from './__helpers.ts'
 
 const typeDefs = `
   scalar Upload
@@ -41,13 +41,13 @@ const resolvers = {
 const ctx = createApolloServerContext({ typeDefs, resolvers })
 
 beforeEach(() => {
-  ;(global as any).FormData = undefined
+  ; (global as any).FormData = undefined
 })
 
 const fileName = 'upload.test.ts'
 
 Deno.test('file upload using global.FormData', async () => {
-  ;(global as any).FormData = FormData
+  ; (global as any).FormData = FormData
 
   const query = gql`
     mutation uploadFile($file: Upload!) {

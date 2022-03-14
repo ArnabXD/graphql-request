@@ -1,27 +1,33 @@
 import { request } from '../src/index.ts'
-;(async function () {
-  const endpoint = 'https://api.graph.cool/simple/v1/cixos23120m0n0173veiiwrjr'
+  ; (async function () {
+    const endpoint = 'https://fruits-api.netlify.app/graphql'
 
-  const query = /* GraphQL */ `
+    const query = /* GraphQL */ `
     {
-      Movie(title: "Inception") {
-        releaseDate
-        actors {
-          fullname # "Cannot query field 'fullname' on type 'Actor'. Did you mean 'name'?"
-        }
+      filterFruitsFam(family: "Rosaceae") {
+        id
+        treename # "Cannot query field 'treename' on type 'Actor'. Did you mean 'tree_name'?"
+        fruit_name
+        family
       }
+    }`
+
+    interface Fruit {
+      "id": string;
+      "tree_name": string;
+      "fruit_name": string;
+      "family": string;
     }
-  `
 
-  interface TData {
-    Movie: { releaseDate: string; actors: Array<{ name: string }> }
-  }
+    interface TData {
+      filterFruitsFam: Fruit[]
+    }
 
-  try {
-    const data = await request<TData>(endpoint, query)
-    console.log(JSON.stringify(data, undefined, 2))
-  } catch (error) {
-    console.error(JSON.stringify(error, undefined, 2))
-    Deno.exit(1)
-  }
-})().catch((error) => console.error(error))
+    try {
+      const data = await request<TData>(endpoint, query)
+      console.log(JSON.stringify(data, undefined, 2))
+    } catch (error) {
+      console.error(JSON.stringify(error, undefined, 2))
+      Deno.exit(0) // We use 0 instead of 1 because we don't want to cause an error in the github actions workflow
+    }
+  })().catch((error) => console.error(error))
