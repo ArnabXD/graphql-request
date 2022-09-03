@@ -1,57 +1,60 @@
 // deno-lint-ignore-file no-explicit-any
 const crossFetch = fetch;
-import { OperationDefinitionNode, DocumentNode } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts';
-import { parse, print } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts'
-import createRequestBody from './createRequestBody.ts'
+import {
+  DocumentNode,
+  OperationDefinitionNode,
+} from "https://deno.land/x/graphql_deno@v15.0.0/mod.ts";
+import { parse, print } from "https://deno.land/x/graphql_deno@v15.0.0/mod.ts";
+import createRequestBody from "./createRequestBody.ts";
 import {
   BatchRequestDocument,
+  BatchRequestsExtendedOptions,
   BatchRequestsOptions,
   ClientError,
+  RawRequestExtendedOptions,
   RawRequestOptions,
   RequestDocument,
-  RequestOptions,
-  BatchRequestsExtendedOptions,
-  RawRequestExtendedOptions,
   RequestExtendedOptions,
+  RequestOptions,
   Variables,
-} from './types.ts'
-import * as Dom from './types.dom.ts'
+} from "./types.ts";
+import * as Dom from "./types.dom.ts";
 
 import {
   parseBatchRequestArgs,
-  parseRawRequestArgs,
-  parseRequestArgs,
   parseBatchRequestsExtendedArgs,
+  parseRawRequestArgs,
   parseRawRequestExtendedArgs,
+  parseRequestArgs,
   parseRequestExtendedArgs,
-} from './parseArgs.ts'
+} from "./parseArgs.ts";
 
-export {
-  ClientError,
-}
+export { ClientError };
 
 /**
  * Convert the given headers configuration into a plain object.
  */
-const resolveHeaders = (headers: Dom.RequestInit['headers']): Record<string, string> => {
-  let oHeaders: Record<string, string> = {}
+const resolveHeaders = (
+  headers: Dom.RequestInit["headers"],
+): Record<string, string> => {
+  let oHeaders: Record<string, string> = {};
   if (headers) {
     if (
-      (typeof Headers !== 'undefined' && headers instanceof Headers) ||
+      (typeof Headers !== "undefined" && headers instanceof Headers) ||
       headers instanceof Headers
     ) {
-      oHeaders = HeadersInstanceToPlainObject(headers)
+      oHeaders = HeadersInstanceToPlainObject(headers);
     } else if (Array.isArray(headers)) {
       headers.forEach(([name, value]) => {
-        oHeaders[name] = value
-      })
+        oHeaders[name] = value;
+      });
     } else {
-      oHeaders = headers as Record<string, string>
+      oHeaders = headers as Record<string, string>;
     }
   }
 
-  return oHeaders
-}
+  return oHeaders;
+};
 
 /**
  * Clean a GraphQL document to send it via a GET query
@@ -59,11 +62,16 @@ const resolveHeaders = (headers: Dom.RequestInit['headers']): Record<string, str
  * @param {string} str GraphQL query
  * @returns {string} Cleaned query
  */
-const queryCleanner = (str: string): string => str.replace(/([\s,]|#[^\n\r]+)+/g, ' ').trim()
+const queryCleanner = (str: string): string =>
+  str.replace(/([\s,]|#[^\n\r]+)+/g, " ").trim();
 
 type TBuildGetQueryParams<V> =
-  | { query: string; variables: V | undefined; operationName: string | undefined }
-  | { query: string[]; variables: V[] | undefined; operationName: undefined }
+  | {
+    query: string;
+    variables: V | undefined;
+    operationName: string | undefined;
+  }
+  | { query: string[]; variables: V[] | undefined; operationName: undefined };
 
 /**
  * Create query string for GraphQL request
@@ -74,39 +82,47 @@ type TBuildGetQueryParams<V> =
  * @param {string|undefined} param0.operationName the GraphQL operation name
  * @param {any|any[]} param0.variables the GraphQL variables to use
  */
-const buildGetQueryParams = <V>({ query, variables, operationName }: TBuildGetQueryParams<V>): string => {
+const buildGetQueryParams = <V>(
+  { query, variables, operationName }: TBuildGetQueryParams<V>,
+): string => {
   if (!Array.isArray(query)) {
-    const search: string[] = [`query=${encodeURIComponent(queryCleanner(query))}`]
+    const search: string[] = [
+      `query=${encodeURIComponent(queryCleanner(query))}`,
+    ];
 
     if (variables) {
-      search.push(`variables=${encodeURIComponent(JSON.stringify(variables))}`)
+      search.push(`variables=${encodeURIComponent(JSON.stringify(variables))}`);
     }
 
     if (operationName) {
-      search.push(`operationName=${encodeURIComponent(operationName)}`)
+      search.push(`operationName=${encodeURIComponent(operationName)}`);
     }
 
-    return search.join('&')
+    return search.join("&");
   }
 
-  if (typeof variables !== 'undefined' && !Array.isArray(variables)) {
-    throw new Error('Cannot create query with given variable type, array expected')
+  if (typeof variables !== "undefined" && !Array.isArray(variables)) {
+    throw new Error(
+      "Cannot create query with given variable type, array expected",
+    );
   }
 
   // Batch support
-  const payload = query.reduce<{ query: string; variables: string | undefined }[]>(
+  const payload = query.reduce<
+    { query: string; variables: string | undefined }[]
+  >(
     (accu, currentQuery, index) => {
       accu.push({
         query: queryCleanner(currentQuery),
         variables: variables ? JSON.stringify(variables[index]) : undefined,
-      })
-      return accu
+      });
+      return accu;
     },
-    []
-  )
+    [],
+  );
 
-  return `query=${encodeURIComponent(JSON.stringify(payload))}`
-}
+  return `query=${encodeURIComponent(JSON.stringify(payload))}`;
+};
 
 /**
  * Fetch data using POST method
@@ -120,26 +136,28 @@ const post = async <V = Variables>({
   fetch,
   fetchOptions,
 }: {
-  url: string
-  query: string | string[]
-  fetch: any
-  fetchOptions: Dom.RequestInit
-  variables?: V
-  headers?: Dom.RequestInit['headers']
-  operationName?: string
+  url: string;
+  query: string | string[];
+  fetch: any;
+  fetchOptions: Dom.RequestInit;
+  variables?: V;
+  headers?: Dom.RequestInit["headers"];
+  operationName?: string;
 }) => {
-  const body = createRequestBody(query, variables, operationName)
+  const body = createRequestBody(query, variables, operationName);
 
   return await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      ...(typeof body === 'string' ? { 'Content-Type': 'application/json' } : {}),
+      ...(typeof body === "string"
+        ? { "Content-Type": "application/json" }
+        : {}),
       ...headers,
     },
     body,
     ...fetchOptions,
-  })
-}
+  });
+};
 
 /**
  * Fetch data using GET method
@@ -153,37 +171,37 @@ const get = async <V = Variables>({
   fetch,
   fetchOptions,
 }: {
-  url: string
-  query: string | string[]
-  fetch: any
-  fetchOptions: Dom.RequestInit
-  variables?: V
-  headers?: HeadersInit
-  operationName?: string
+  url: string;
+  query: string | string[];
+  fetch: any;
+  fetchOptions: Dom.RequestInit;
+  variables?: V;
+  headers?: HeadersInit;
+  operationName?: string;
 }) => {
   const queryParams = buildGetQueryParams<V>({
     query,
     variables,
     operationName,
-  } as TBuildGetQueryParams<V>)
+  } as TBuildGetQueryParams<V>);
 
   return await fetch(`${url}?${queryParams}`, {
-    method: 'GET',
+    method: "GET",
     headers,
     ...fetchOptions,
-  })
-}
+  });
+};
 
 /**
  * GraphQL Client.
  */
 export class GraphQLClient {
-  private url: string
-  private options: Dom.RequestInit
+  private url: string;
+  private options: Dom.RequestInit;
 
   constructor(url: string, options?: Dom.RequestInit) {
-    this.url = url
-    this.options = options || {}
+    this.url = url;
+    this.options = options || {};
   }
 
   /**
@@ -192,25 +210,36 @@ export class GraphQLClient {
   async rawRequest<T = any, V = Variables>(
     query: string,
     variables?: V,
-    requestHeaders?: Dom.RequestInit['headers']
-  ): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>
+    requestHeaders?: Dom.RequestInit["headers"],
+  ): Promise<
+    { data: T; extensions?: any; headers: Dom.Headers; status: number }
+  >;
   async rawRequest<T = any, V = Variables>(
-    options: RawRequestOptions<V>
-  ): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>
+    options: RawRequestOptions<V>,
+  ): Promise<
+    { data: T; extensions?: any; headers: Dom.Headers; status: number }
+  >;
   rawRequest<T = any, V = Variables>(
     queryOrOptions: string | RawRequestOptions<V>,
     variables?: V,
-    requestHeaders?: Dom.RequestInit['headers']
-  ): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }> {
-    const rawRequestOptions = parseRawRequestArgs<V>(queryOrOptions, variables, requestHeaders)
+    requestHeaders?: Dom.RequestInit["headers"],
+  ): Promise<
+    { data: T; extensions?: any; headers: Dom.Headers; status: number }
+  > {
+    const rawRequestOptions = parseRawRequestArgs<V>(
+      queryOrOptions,
+      variables,
+      requestHeaders,
+    );
 
-    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    const { url } = this
+    const { headers, fetch = crossFetch, method = "POST", ...fetchOptions } =
+      this.options;
+    const { url } = this;
     if (rawRequestOptions.signal !== undefined) {
-      fetchOptions.signal = rawRequestOptions.signal
+      fetchOptions.signal = rawRequestOptions.signal;
     }
 
-    const { operationName } = resolveRequestDocument(rawRequestOptions.query)
+    const { operationName } = resolveRequestDocument(rawRequestOptions.query);
 
     return makeRequest<T, V>({
       url,
@@ -224,7 +253,7 @@ export class GraphQLClient {
       fetch,
       method,
       fetchOptions,
-    })
+    });
   }
 
   /**
@@ -233,23 +262,30 @@ export class GraphQLClient {
   async request<T = any, V = Variables>(
     document: RequestDocument,
     variables?: V,
-    requestHeaders?: Dom.RequestInit['headers']
-  ): Promise<T>
-  async request<T = any, V = Variables>(options: RequestOptions<V>): Promise<T>
+    requestHeaders?: Dom.RequestInit["headers"],
+  ): Promise<T>;
+  async request<T = any, V = Variables>(options: RequestOptions<V>): Promise<T>;
   async request<T = any, V = Variables>(
     documentOrOptions: RequestDocument | RequestOptions<V>,
     variables?: V,
-    requestHeaders?: Dom.RequestInit['headers']
+    requestHeaders?: Dom.RequestInit["headers"],
   ): Promise<T> {
-    const requestOptions = parseRequestArgs<V>(documentOrOptions, variables, requestHeaders)
+    const requestOptions = parseRequestArgs<V>(
+      documentOrOptions,
+      variables,
+      requestHeaders,
+    );
 
-    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    const { url } = this
+    const { headers, fetch = crossFetch, method = "POST", ...fetchOptions } =
+      this.options;
+    const { url } = this;
     if (requestOptions.signal !== undefined) {
-      fetchOptions.signal = requestOptions.signal
+      fetchOptions.signal = requestOptions.signal;
     }
 
-    const { query, operationName } = resolveRequestDocument(requestOptions.document)
+    const { query, operationName } = resolveRequestDocument(
+      requestOptions.document,
+    );
 
     const { data } = await makeRequest<T, V>({
       url,
@@ -263,9 +299,9 @@ export class GraphQLClient {
       fetch,
       method,
       fetchOptions,
-    })
+    });
 
-    return data
+    return data;
   }
 
   /**
@@ -273,25 +309,31 @@ export class GraphQLClient {
    */
   async batchRequests<T extends any = any, V = Variables>(
     documents: BatchRequestDocument<V>[],
-    requestHeaders?: Dom.RequestInit['headers']
-  ): Promise<T>
-  async batchRequests<T = any, V = Variables>(options: BatchRequestsOptions<V>): Promise<T>
+    requestHeaders?: Dom.RequestInit["headers"],
+  ): Promise<T>;
+  async batchRequests<T = any, V = Variables>(
+    options: BatchRequestsOptions<V>,
+  ): Promise<T>;
   async batchRequests<T = any, V = Variables>(
     documentsOrOptions: BatchRequestDocument<V>[] | BatchRequestsOptions<V>,
-    requestHeaders?: Dom.RequestInit['headers']
+    requestHeaders?: Dom.RequestInit["headers"],
   ): Promise<T> {
-    const batchRequestOptions: BatchRequestsOptions<any> = parseBatchRequestArgs<V>(documentsOrOptions, requestHeaders)
+    const batchRequestOptions: BatchRequestsOptions<any> =
+      parseBatchRequestArgs<V>(documentsOrOptions, requestHeaders);
 
-    const { headers, fetch = crossFetch, method = 'POST', ...fetchOptions } = this.options
-    const { url } = this
+    const { headers, fetch = crossFetch, method = "POST", ...fetchOptions } =
+      this.options;
+    const { url } = this;
     if (batchRequestOptions.signal !== undefined) {
-      fetchOptions.signal = batchRequestOptions.signal
+      fetchOptions.signal = batchRequestOptions.signal;
     }
 
     const queries = (batchRequestOptions.documents).map(
-      ({ document }) => resolveRequestDocument(document).query
-    )
-    const variables = batchRequestOptions.documents.map(({ variables }) => variables)
+      ({ document }) => resolveRequestDocument(document).query,
+    );
+    const variables = batchRequestOptions.documents.map(({ variables }) =>
+      variables
+    );
 
     const { data } = await makeRequest<T, (V | undefined)[]>({
       url,
@@ -305,39 +347,39 @@ export class GraphQLClient {
       fetch,
       method,
       fetchOptions,
-    })
+    });
 
-    return data
+    return data;
   }
 
-  setHeaders(headers: Dom.RequestInit['headers']): GraphQLClient {
-    this.options.headers = headers
-    return this
+  setHeaders(headers: Dom.RequestInit["headers"]): GraphQLClient {
+    this.options.headers = headers;
+    return this;
   }
 
   /**
    * Attach a header to the client. All subsequent requests will have this header.
    */
   setHeader(key: string, value: string): GraphQLClient {
-    const { headers } = this.options
+    const { headers } = this.options;
 
     if (headers) {
       // todo what if headers is in nested array form... ?
       // @ts-ignore We can use any key in the header
-      headers[key] = value
+      headers[key] = value;
     } else {
-      this.options.headers = { [key]: value }
+      this.options.headers = { [key]: value };
     }
 
-    return this
+    return this;
   }
 
   /**
    * Change the client endpoint. All subsequent requests will send to this endpoint.
    */
   setEndpoint(value: string): GraphQLClient {
-    this.url = value
-    return this
+    this.url = value;
+    return this;
   }
 }
 
@@ -348,20 +390,22 @@ async function makeRequest<T = any, V = Variables>({
   headers,
   operationName,
   fetch,
-  method = 'POST',
+  method = "POST",
   fetchOptions,
 }: {
-  url: string
-  query: string | string[]
-  variables?: V
-  headers?: Dom.RequestInit['headers']
-  operationName?: string
-  fetch: any
-  method: string
-  fetchOptions: Dom.RequestInit
-}): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }> {
-  const fetcher = method.toUpperCase() === 'POST' ? post : get
-  const isBathchingQuery = Array.isArray(query)
+  url: string;
+  query: string | string[];
+  variables?: V;
+  headers?: Dom.RequestInit["headers"];
+  operationName?: string;
+  fetch: any;
+  method: string;
+  fetchOptions: Dom.RequestInit;
+}): Promise<
+  { data: T; extensions?: any; headers: Dom.Headers; status: number }
+> {
+  const fetcher = method.toUpperCase() === "POST" ? post : get;
+  const isBathchingQuery = Array.isArray(query);
 
   const response = await fetcher({
     url,
@@ -371,25 +415,26 @@ async function makeRequest<T = any, V = Variables>({
     headers: headers as any, // TODO
     fetch,
     fetchOptions,
-  })
-  const result = await getResult(response)
+  });
+  const result = await getResult(response);
 
-  const successfullyReceivedData =
-    isBathchingQuery && Array.isArray(result) ? !result.some(({ data }) => !data) : !!result.data
+  const successfullyReceivedData = isBathchingQuery && Array.isArray(result)
+    ? !result.some(({ data }) => !data)
+    : !!result.data;
 
   if (response.ok && !result.errors && successfullyReceivedData) {
-    const { headers, status } = response
+    const { headers, status } = response;
     return {
       ...(isBathchingQuery ? { data: result } : result),
       headers,
       status,
-    }
+    };
   } else {
-    const errorResult = typeof result === 'string' ? { error: result } : result
+    const errorResult = typeof result === "string" ? { error: result } : result;
     throw new ClientError(
       { ...errorResult, status: response.status, headers: response.headers },
-      { query, variables }
-    )
+      { query, variables },
+    );
   }
 }
 
@@ -400,22 +445,29 @@ export async function rawRequest<T = any, V = Variables>(
   url: string,
   query: string,
   variables?: V,
-  requestHeaders?: Dom.RequestInit['headers']
-): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>
+  requestHeaders?: Dom.RequestInit["headers"],
+): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>;
 export async function rawRequest<T = any, V = Variables>(
-  options: RawRequestExtendedOptions<V>
-): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>
+  options: RawRequestExtendedOptions<V>,
+): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }>;
 export function rawRequest<T = any, V = Variables>(
   urlOrOptions: string | RawRequestExtendedOptions<V>,
   query?: string,
   variables?: V,
-  requestHeaders?: Dom.RequestInit['headers']
-): Promise<{ data: T; extensions?: any; headers: Dom.Headers; status: number }> {
-  const requestOptions = parseRawRequestExtendedArgs<V>(urlOrOptions, query, variables, requestHeaders)
-  const client = new GraphQLClient(requestOptions.url)
+  requestHeaders?: Dom.RequestInit["headers"],
+): Promise<
+  { data: T; extensions?: any; headers: Dom.Headers; status: number }
+> {
+  const requestOptions = parseRawRequestExtendedArgs<V>(
+    urlOrOptions,
+    query,
+    variables,
+    requestHeaders,
+  );
+  const client = new GraphQLClient(requestOptions.url);
   return client.rawRequest<T, V>({
     ...requestOptions,
-  })
+  });
 }
 
 /**
@@ -456,20 +508,27 @@ export async function request<T = any, V = Variables>(
   url: string,
   document: RequestDocument,
   variables?: V,
-  requestHeaders?: Dom.RequestInit['headers']
-): Promise<T>
-export async function request<T = any, V = Variables>(options: RequestExtendedOptions<V>): Promise<T>
+  requestHeaders?: Dom.RequestInit["headers"],
+): Promise<T>;
+export async function request<T = any, V = Variables>(
+  options: RequestExtendedOptions<V>,
+): Promise<T>;
 export function request<T = any, V = Variables>(
   urlOrOptions: string | RequestExtendedOptions<V>,
   document?: RequestDocument,
   variables?: V,
-  requestHeaders?: Dom.RequestInit['headers']
+  requestHeaders?: Dom.RequestInit["headers"],
 ): Promise<T> {
-  const requestOptions = parseRequestExtendedArgs<V>(urlOrOptions, document, variables, requestHeaders)
-  const client = new GraphQLClient(requestOptions.url)
+  const requestOptions = parseRequestExtendedArgs<V>(
+    urlOrOptions,
+    document,
+    variables,
+    requestHeaders,
+  );
+  const client = new GraphQLClient(requestOptions.url);
   return client.request<T, V>({
     ...requestOptions,
-  })
+  });
 }
 
 /**
@@ -509,39 +568,43 @@ export function request<T = any, V = Variables>(
 export async function batchRequests<T = any, V = Variables>(
   url: string,
   documents: BatchRequestDocument<V>[],
-  requestHeaders?: Dom.RequestInit['headers']
-): Promise<T>
+  requestHeaders?: Dom.RequestInit["headers"],
+): Promise<T>;
 export async function batchRequests<T = any, V = Variables>(
-  options: BatchRequestsExtendedOptions<V>
-): Promise<T>
+  options: BatchRequestsExtendedOptions<V>,
+): Promise<T>;
 export function batchRequests<T = any, V = Variables>(
   urlOrOptions: string | BatchRequestsExtendedOptions<V>,
   documents?: BatchRequestDocument<V>[],
-  requestHeaders?: Dom.RequestInit['headers']
+  requestHeaders?: Dom.RequestInit["headers"],
 ): Promise<T> {
-  const requestOptions = parseBatchRequestsExtendedArgs<V>(urlOrOptions, documents, requestHeaders)
-  const client = new GraphQLClient(requestOptions.url)
-  return client.batchRequests<T, V>({ ...requestOptions })
+  const requestOptions = parseBatchRequestsExtendedArgs<V>(
+    urlOrOptions,
+    documents,
+    requestHeaders,
+  );
+  const client = new GraphQLClient(requestOptions.url);
+  return client.batchRequests<T, V>({ ...requestOptions });
 }
 
-export default request
+export default request;
 
 /**
  * todo
  */
 function getResult(response: Dom.Response): Promise<any> {
-  let contentType: string | undefined
+  let contentType: string | undefined;
 
   response.headers.forEach((value: string, key: string) => {
-    if (key.toLowerCase() === 'content-type') {
-      contentType = value
+    if (key.toLowerCase() === "content-type") {
+      contentType = value;
     }
-  })
+  });
 
-  if (contentType && contentType.toLowerCase().startsWith('application/json')) {
-    return response.json()
+  if (contentType && contentType.toLowerCase().startsWith("application/json")) {
+    return response.json();
   } else {
-    return response.text()
+    return response.text();
   }
 }
 /**
@@ -549,36 +612,38 @@ function getResult(response: Dom.Response): Promise<any> {
  */
 
 function extractOperationName(document: DocumentNode): string | undefined {
-  let operationName = undefined
+  let operationName = undefined;
 
   const operationDefinitions = document.definitions.filter(
-    (definition: any) => definition.kind === 'OperationDefinition'
-  ) as OperationDefinitionNode[]
+    (definition: any) => definition.kind === "OperationDefinition",
+  ) as OperationDefinitionNode[];
 
   if (operationDefinitions.length === 1) {
-    operationName = operationDefinitions[0].name?.value
+    operationName = operationDefinitions[0].name?.value;
   }
 
-  return operationName
+  return operationName;
 }
 
-function resolveRequestDocument(document: RequestDocument): { query: string; operationName?: string } {
-  if (typeof document === 'string') {
-    let operationName = undefined
+function resolveRequestDocument(
+  document: RequestDocument,
+): { query: string; operationName?: string } {
+  if (typeof document === "string") {
+    let operationName = undefined;
 
     try {
-      const parsedDocument = parse(document)
-      operationName = extractOperationName(parsedDocument)
+      const parsedDocument = parse(document);
+      operationName = extractOperationName(parsedDocument);
     } catch (_: unknown) {
       // Failed parsing the document, the operationName will be undefined
     }
 
-    return { query: document, operationName }
+    return { query: document, operationName };
   }
 
-  const operationName = extractOperationName(document)
+  const operationName = extractOperationName(document);
 
-  return { query: print(document), operationName }
+  return { query: print(document), operationName };
 }
 
 /**
@@ -596,18 +661,21 @@ function resolveRequestDocument(document: RequestDocument): { query: string; ope
  */
 export function gql(chunks: TemplateStringsArray, ...variables: any[]): string {
   return chunks.reduce(
-    (accumulator, chunk, index) => `${accumulator}${chunk}${index in variables ? variables[index] : ''}`,
-    ''
-  )
+    (accumulator, chunk, index) =>
+      `${accumulator}${chunk}${index in variables ? variables[index] : ""}`,
+    "",
+  );
 }
 
 /**
  * Convert Headers instance into regular object
  */
-function HeadersInstanceToPlainObject(headers: Dom.Response['headers']): Record<string, string> {
-  const o: any = {}
+function HeadersInstanceToPlainObject(
+  headers: Dom.Response["headers"],
+): Record<string, string> {
+  const o: any = {};
   headers.forEach((v: string, k: string) => {
-    o[k] = v
-  })
-  return o
+    o[k] = v;
+  });
+  return o;
 }

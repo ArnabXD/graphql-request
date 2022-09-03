@@ -1,10 +1,10 @@
-import { GraphQLClient } from '../mod.ts'
-import { wrapFetch } from 'https://deno.land/x/fetch_goody@v5.0.1/mod.ts';
+import { GraphQLClient } from "../mod.ts";
+import { wrapFetch } from "https://deno.land/x/fetch_goody@v5.0.1/mod.ts";
 
 const start = async () => {
-  const endpoint = 'https://fruits-api.netlify.app/graphql'
+  const endpoint = "https://fruits-api.netlify.app/graphql";
 
-  const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch() })
+  const graphQLClient = new GraphQLClient(endpoint, { fetch: wrapFetch() });
 
   const query = /* GraphQL */ `
     {
@@ -14,7 +14,7 @@ const start = async () => {
         fruit_name
         family
       }
-    }`
+    }`;
 
   interface Fruit {
     "id": string;
@@ -24,11 +24,11 @@ const start = async () => {
   }
 
   interface TData {
-    filterFruitsFam: Fruit[]
+    filterFruitsFam: Fruit[];
   }
 
-  const data = await graphQLClient.rawRequest<TData>(query)
-  console.log(JSON.stringify(data, undefined, 2))
-}
+  const data = await graphQLClient.rawRequest<TData>(query);
+  console.log(JSON.stringify(data, undefined, 2));
+};
 
-start().catch((error) => console.error(error))
+start().catch((error) => console.error(error));

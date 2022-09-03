@@ -1,8 +1,8 @@
-import { createReadStream } from 'fs'
-import { FileUpload, GraphQLUpload } from 'graphql-upload'
-import { join } from 'path'
-import { gql, request } from '../mod.ts'
-import { createApolloServerContext } from './__helpers.ts'
+import { createReadStream } from "fs";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { join } from "path";
+import { gql, request } from "../mod.ts";
+import { createApolloServerContext } from "./__helpers.ts";
 
 const typeDefs = `
   scalar Upload
@@ -19,9 +19,9 @@ const typeDefs = `
   type User {
     id: Int!
   }
-`
+`;
 
-export const users = [{ id: 1 }, { id: 2 }, { id: 3 }]
+export const users = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
 const resolvers = {
   Query: {
@@ -31,47 +31,47 @@ const resolvers = {
   },
   Mutation: {
     async uploadFile(source: any, { file }: { file: Promise<FileUpload> }) {
-      const { filename } = await file
-      return filename
+      const { filename } = await file;
+      return filename;
     },
   },
   Upload: GraphQLUpload as any,
-}
+};
 
-const ctx = createApolloServerContext({ typeDefs, resolvers })
+const ctx = createApolloServerContext({ typeDefs, resolvers });
 
 beforeEach(() => {
-  ; (global as any).FormData = undefined
-})
+  (global as any).FormData = undefined;
+});
 
-const fileName = 'upload.test.ts'
+const fileName = "upload.test.ts";
 
-Deno.test('file upload using global.FormData', async () => {
-  ; (global as any).FormData = FormData
+Deno.test("file upload using global.FormData", async () => {
+  (global as any).FormData = FormData;
 
   const query = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file)
     }
-  `
+  `;
 
   const result = await request(ctx.url, query, {
     file: createReadStream(join(__dirname, fileName)),
-  })
+  });
 
-  expect(result).toEqual({ uploadFile: fileName })
-})
+  expect(result).toEqual({ uploadFile: fileName });
+});
 
-Deno.test('file upload still works if no global.FormData provided', async () => {
+Deno.test("file upload still works if no global.FormData provided", async () => {
   const query = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file)
     }
-  `
+  `;
 
   const result = await request(ctx.url, query, {
     file: createReadStream(join(__dirname, fileName)),
-  })
+  });
 
-  expect(result).toEqual({ uploadFile: fileName })
-})
+  expect(result).toEqual({ uploadFile: fileName });
+});

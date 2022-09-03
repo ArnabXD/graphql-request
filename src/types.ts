@@ -1,90 +1,98 @@
 // deno-lint-ignore-file no-explicit-any
-import { DocumentNode } from 'https://deno.land/x/graphql_deno@v15.0.0/mod.ts'
-import * as Dom from './types.dom.ts'
+import { DocumentNode } from "https://deno.land/x/graphql_deno@v15.0.0/mod.ts";
+import * as Dom from "./types.dom.ts";
 
-export type Variables = { [key: string]: any }
+export type Variables = { [key: string]: any };
 
 export interface GraphQLError {
-  message: string
-  locations?: { line: number; column: number }[]
-  path?: string[]
-  extensions?: any
+  message: string;
+  locations?: { line: number; column: number }[];
+  path?: string[];
+  extensions?: any;
 }
 
 export interface GraphQLResponse<T = any> {
-  data?: T
-  errors?: GraphQLError[]
-  extensions?: any
-  status: number
-  [key: string]: any
+  data?: T;
+  errors?: GraphQLError[];
+  extensions?: any;
+  status: number;
+  [key: string]: any;
 }
 
 export interface GraphQLRequestContext<V = Variables> {
-  query: string | string[]
-  variables?: V
+  query: string | string[];
+  variables?: V;
 }
 
 export class ClientError extends Error {
-  response: GraphQLResponse
-  request: GraphQLRequestContext
+  response: GraphQLResponse;
+  request: GraphQLRequestContext;
 
   constructor(response: GraphQLResponse, request: GraphQLRequestContext) {
-    const message = `${ClientError.extractMessage(response)}: ${JSON.stringify({
-      response,
-      request,
-    })}`
+    const message = `${ClientError.extractMessage(response)}: ${
+      JSON.stringify({
+        response,
+        request,
+      })
+    }`;
 
-    super(message)
+    super(message);
 
-    Object.setPrototypeOf(this, ClientError.prototype)
+    Object.setPrototypeOf(this, ClientError.prototype);
 
-    this.response = response
-    this.request = request
+    this.response = response;
+    this.request = request;
 
     // this is needed as Safari doesn't support .captureStackTrace
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, ClientError)
+    if (typeof Error.captureStackTrace === "function") {
+      Error.captureStackTrace(this, ClientError);
     }
   }
 
   private static extractMessage(response: GraphQLResponse): string {
     try {
-      return response.errors![0].message
+      return response.errors![0].message;
     } catch (_e) {
-      return `GraphQL Error (Code: ${response.status})`
+      return `GraphQL Error (Code: ${response.status})`;
     }
   }
 }
 
-export type RequestDocument = string | DocumentNode
+export type RequestDocument = string | DocumentNode;
 
 export type BatchRequestDocument<V = Variables> = {
-  document: RequestDocument
-  variables?: V
-}
+  document: RequestDocument;
+  variables?: V;
+};
 
 export type RawRequestOptions<V = Variables> = {
-  query: string
-  variables?: V
-  requestHeaders?: Dom.RequestInit['headers']
-  signal?: Dom.RequestInit['signal']
-}
+  query: string;
+  variables?: V;
+  requestHeaders?: Dom.RequestInit["headers"];
+  signal?: Dom.RequestInit["signal"];
+};
 
 export type RequestOptions<V = Variables> = {
-  document: RequestDocument
-  variables?: V
-  requestHeaders?: Dom.RequestInit['headers']
-  signal?: Dom.RequestInit['signal']
-}
+  document: RequestDocument;
+  variables?: V;
+  requestHeaders?: Dom.RequestInit["headers"];
+  signal?: Dom.RequestInit["signal"];
+};
 
 export type BatchRequestsOptions<V = Variables> = {
-  documents: BatchRequestDocument<V>[]
-  requestHeaders?: Dom.RequestInit['headers']
-  signal?: Dom.RequestInit['signal']
-}
+  documents: BatchRequestDocument<V>[];
+  requestHeaders?: Dom.RequestInit["headers"];
+  signal?: Dom.RequestInit["signal"];
+};
 
-export type RequestExtendedOptions<V = Variables> = { url: string } & RequestOptions<V>
+export type RequestExtendedOptions<V = Variables> =
+  & { url: string }
+  & RequestOptions<V>;
 
-export type RawRequestExtendedOptions<V = Variables> = { url: string } & RawRequestOptions<V>
+export type RawRequestExtendedOptions<V = Variables> =
+  & { url: string }
+  & RawRequestOptions<V>;
 
-export type BatchRequestsExtendedOptions<V = Variables> = { url: string } & BatchRequestsOptions<V>
+export type BatchRequestsExtendedOptions<V = Variables> =
+  & { url: string }
+  & BatchRequestsOptions<V>;
