@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import extractFiles, { ExtractableFile } from "extract-files/extractFiles.mjs";
-import isExtractableFile from "extract-files/isExtractableFile.mjs";
+import extractFiles, {
+  ExtractableFile,
+} from "https://esm.sh/extract-files@13.0.0/extractFiles.mjs";
+import isExtractableFile from "https://esm.sh/extract-files@13.0.0/isExtractableFile.mjs";
 
 import { Variables } from "./types.ts";
 
@@ -9,7 +11,7 @@ import { Variables } from "./types.ts";
  * https://github.com/sindresorhus/is-stream/blob/3750505b0727f6df54324784fe369365ef78841e/index.js#L3
  */
 const isExtractableFileEnhanced = (
-  value: any,
+  value: any
 ): value is ExtractableFile | { pipe: () => unknown } =>
   isExtractableFile(value) ||
   (value !== null &&
@@ -24,12 +26,12 @@ const isExtractableFileEnhanced = (
 export default function createRequestBody(
   query: string | string[],
   variables?: Variables | Variables[],
-  operationName?: string,
+  operationName?: string
 ): string | FormData {
   const { clone, files } = extractFiles(
     { query, variables, operationName },
     isExtractableFileEnhanced,
-    "",
+    ""
   );
 
   if (files.size === 0) {
@@ -39,7 +41,7 @@ export default function createRequestBody(
 
     if (typeof variables !== "undefined" && !Array.isArray(variables)) {
       throw new Error(
-        "Cannot create request body with given variable type, array expected",
+        "Cannot create request body with given variable type, array expected"
       );
     }
 
